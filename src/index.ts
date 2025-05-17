@@ -11,6 +11,7 @@ import mongoose from "mongoose";
 import router from "./routers/index";
 import { apiLimiter } from "./middlewares/rateLimiter";
 import { errorHandler } from "./middlewares/errorHandler";
+import { initCronJob } from "./utils/cronService";
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 app.use(cookieParser());
 app.use(apiLimiter);
+initCronJob();
 
 const { PORT = 8000 } = process.env;
 
