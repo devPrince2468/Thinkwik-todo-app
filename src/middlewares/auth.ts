@@ -4,7 +4,7 @@ import { verifyToken } from "../utils/jwt";
 import { AppError } from "../helpers/AppError";
 
 export interface AuthenticatedRequest extends Request {
-  user?: JwtPayload;
+  user?: { id: string };
 }
 
 export const authenticate = (
@@ -21,7 +21,7 @@ export const authenticate = (
 
     const token = authHeader.split(" ")[1];
     const decoded = verifyToken(token);
-    req.user = decoded;
+    req.user = { id: (decoded as any).id };
     next();
   } catch (error) {
     throw new AppError("Unauthorized", 401);
