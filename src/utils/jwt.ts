@@ -6,6 +6,12 @@ dotenv.config();
 export interface JwtPayload {
   id: string;
   email: string;
+  role: string;
+}
+
+interface user {
+  id: string;
+  role: string;
 }
 
 export const generateToken = (payload: JwtPayload): string => {
@@ -15,8 +21,8 @@ export const generateToken = (payload: JwtPayload): string => {
   });
 };
 
-export const verifyToken = (token: string): JwtPayload => {
+export const verifyToken = (token: string): user => {
   return jwt.verify(token, process.env.JWT_SECRET, {
     algorithms: ["HS256"],
-  }) as JwtPayload;
+  }) as user;
 };

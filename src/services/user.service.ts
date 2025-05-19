@@ -36,7 +36,11 @@ export const userService = {
         throw new AppError("Invalid password", 401);
       }
 
-      const userPayload = { id: user._id.toString(), email: user.email };
+      const userPayload = {
+        id: user._id.toString(),
+        email: user.email,
+        role: user.role,
+      };
 
       const token = generateToken(userPayload);
 

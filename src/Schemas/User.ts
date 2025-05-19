@@ -1,11 +1,13 @@
 import mongoose, { Schema, Document } from "mongoose";
 import Joi from "joi";
 import bcrypt from "bcryptjs";
+import { roles } from "../constants/Enums";
 
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  role: string;
 }
 
 const UserSchema: Schema = new Schema(
@@ -31,6 +33,11 @@ const UserSchema: Schema = new Schema(
       },
       minlength: 8,
     },
+    role: {
+      type: String,
+      enum: roles,
+      default: "user",
+    },
   },
   { timestamps: true }
 );
@@ -49,6 +56,7 @@ export const registerUserSchema = Joi.object({
   name: Joi.string().min(2).required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(8).required(),
+  role: Joi.string().min(2).required(),
 });
 
 export const loginUserSchema = Joi.object({
