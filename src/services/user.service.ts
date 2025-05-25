@@ -5,11 +5,15 @@ import { AppError } from "../helpers/AppError";
 
 export const userService = {
   registerUserService: async (userData) => {
-    const user = new User({
+    const userPayload: any = {
       name: userData.name,
       email: userData.email,
       password: userData.password,
-    });
+    };
+    if (userData.role) {
+      userPayload.role = userData.role;
+    }
+    const user = new User(userPayload);
 
     try {
       const savedUser = await user.save();

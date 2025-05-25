@@ -2,30 +2,43 @@ import { Request, Response, NextFunction } from "express";
 import { todoJoiSchema } from "../Schemas/Todo";
 import { User } from "../Schemas/User";
 import { todoService } from "../services/todo.service";
-
-declare global {
-  namespace Express {
-    interface Request {
-      user?: { id: string };
-    }
-  }
-}
+import { AuthenticatedRequest } from "../middlewares/auth";
 
 export const todoController = {
-  getTodos: async (req: Request, res: Response, next: NextFunction) => {
+  getTodos: async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const userId = req.user.id;
-      const todos = await todoService.getTodos(userId);
+      const userRole = req.user.role;
+      let todos;
+      if (userRole === "admin") {
+        todos = await todoService.getTodos("");
+      } else {
+        todos = await todoService.getTodos(userId);
+      }
       res.status(200).json(todos);
     } catch (error) {
       next(error);
     }
   },
-  getTodo: async (req: Request, res: Response, next: NextFunction) => {
+  getTodo: async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const todoId = req.params.id;
       const userId = req.user.id;
-      const todo = await todoService.getTodo(todoId, userId);
+      const userRole = req.user.role;
+      let todo;
+      if (userRole === "admin") {
+        todo = await todoService.getTodo(todoId, "");
+      } else {
+        todo = await todoService.getTodo(todoId, userId);
+      }
       if (!todo) {
         return res.status(404).json({ message: "Todo not found" });
       }
@@ -34,7 +47,11 @@ export const todoController = {
       next(error);
     }
   },
-  addTodo: async (req: Request, res: Response, next: NextFunction) => {
+  addTodo: async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const { title, description, dueDate } = req.body;
       const userId = req.user.id;
@@ -67,7 +84,11 @@ export const todoController = {
     }
   },
 
-  updateTodo: async (req: Request, res: Response, next: NextFunction) => {
+  updateTodo: async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const todoId = req.params.id;
       const userId = req.user.id;
@@ -92,7 +113,11 @@ export const todoController = {
       next(error);
     }
   },
-  deleteTodo: async (req: Request, res: Response, next: NextFunction) => {
+  deleteTodo: async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const todoId = req.params.id;
       const userId = req.user.id;

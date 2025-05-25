@@ -27,11 +27,6 @@ const UserSchema: Schema = new Schema(
       type: String,
       required: true,
       trim: true,
-      validate: {
-        validator: (v: string) => v.trim().length > 0,
-        message: "Password cannot be an empty string",
-      },
-      minlength: 8,
     },
     role: {
       type: String,
@@ -56,7 +51,7 @@ export const registerUserSchema = Joi.object({
   name: Joi.string().min(2).required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(8).required(),
-  role: Joi.string().min(2).required(),
+  role: Joi.string().valid(...roles),
 });
 
 export const loginUserSchema = Joi.object({

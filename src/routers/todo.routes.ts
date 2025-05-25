@@ -1,23 +1,38 @@
 import { Router } from "express";
 import todoController from "../controllers/todo.controller";
 import { authenticate } from "../middlewares/auth";
-import { isValidRole } from "../middlewares/checkRole";
+import { checkPermission } from "../middlewares/checkPermission";
 
 const router = Router();
 
-router.get("/", authenticate, todoController.getTodos);
-router.get("/:id", authenticate, todoController.getTodo);
-router.post("/", authenticate, isValidRole("admin"), todoController.addTodo);
+router.get(
+  "/",
+  authenticate,
+  checkPermission("read", "todo", "own"),
+  todoController.getTodos
+);
+router.get(
+  "/:id",
+  authenticate,
+  checkPermission("read", "todo", "own"),
+  todoController.getTodo
+);
+router.post(
+  "/",
+  authenticate,
+  checkPermission("create", "todo", "own"),
+  todoController.addTodo
+);
 router.delete(
   "/:id",
   authenticate,
-  isValidRole("admin"),
+  checkPermission("delete", "todo", "own"),
   todoController.deleteTodo
 );
 router.put(
   "/:id",
   authenticate,
-  isValidRole("admin"),
+  checkPermission("update", "todo", "own"),
   todoController.updateTodo
 );
 

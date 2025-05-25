@@ -4,7 +4,12 @@ import { Todo } from "../Schemas/Todo";
 export const todoService = {
   getTodos: async (userId: string) => {
     try {
-      const todos = await Todo.find({ user: userId });
+      let todos;
+      if (userId === "") {
+        todos = await Todo.find({});
+      } else {
+        todos = await Todo.find({ user: userId });
+      }
       if (!todos || todos.length === 0) {
         throw new AppError("No todos found for this user", 404);
       }
@@ -15,7 +20,12 @@ export const todoService = {
   },
   getTodo: async (todoId: string, userId: string) => {
     try {
-      const todo = await Todo.findOne({ _id: todoId, user: userId });
+      let todo;
+      if (userId === "") {
+        todo = await Todo.findById(todoId);
+      } else {
+        todo = await Todo.findOne({ _id: todoId, user: userId });
+      }
       if (!todo) {
         throw new AppError("Todo not found", 404);
       }
